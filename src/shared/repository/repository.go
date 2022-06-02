@@ -1,5 +1,11 @@
 package repository
 
+import (
+	"context"
+
+	"github.com/yanuar-nc/go-boiler-plate/src/shared/domain"
+)
+
 type MessageBroker interface {
-	Publish(req interface{}) error
+	Publish(ctx context.Context, topic string, event domain.EventMessage) error
 }
