@@ -13,19 +13,25 @@ import (
 func main() {
 
 	// call config.Load() before start up
-	err := config.Load()
+	cfg, err := config.Load()
 	if err != nil {
 		helper.Log(log.FatalLevel, err.Error(), "Main", "load_config")
 		os.Exit(1)
 	}
 
-	writeDB, err := database.GetGormConn(config.WriteDBHost, config.WriteDBUser, config.WriteDBName, config.WriteDBPassword, config.WriteDBPort)
+	writeDB, err := database.GetGormConn(cfg.WriteDB.Host, cfg.WriteDB.User, cfg.WriteDB.Name, cfg.WriteDB.Password, cfg.WriteDB.Port)
 	if err != nil {
 		helper.Log(log.FatalLevel, err.Error(), "Main", "write_db")
 		os.Exit(1)
 	}
 
-	echoServer, err := NewEchoServer(writeDB, nil)
+	readDB, err := database.GetGormConn(cfg.ReadDB.Host, cfg.ReadDB.User, cfg.ReadDB.Name, cfg.ReadDB.Password, cfg.ReadDB.Port)
+	if err != nil {
+		helper.Log(log.FatalLevel, err.Error(), "Main", "read_db")
+		os.Exit(1)
+	}
+
+	echoServer, err := NewEchoServer(writeDB, readDB)
 	if err != nil {
 		helper.Log(log.FatalLevel, err.Error(), "Main", "echo_server")
 		os.Exit(1)
