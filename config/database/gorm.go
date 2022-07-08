@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	movie "github.com/yanuar-nc/go-boiler-plate/src/movie/domain"
+	movie "github.com/yanuar-nc/go-boiler-plate/src/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

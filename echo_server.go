@@ -6,9 +6,9 @@ import (
 
 	"github.com/yanuar-nc/go-boiler-plate/config"
 
-	movieDeliveryJson "github.com/yanuar-nc/go-boiler-plate/src/movie/delivery/json"
-	movieRepository "github.com/yanuar-nc/go-boiler-plate/src/movie/repository"
-	movieUsecasePackage "github.com/yanuar-nc/go-boiler-plate/src/movie/usecase"
+	deliveryJson "github.com/yanuar-nc/go-boiler-plate/src/delivery/json"
+	gormRepository "github.com/yanuar-nc/go-boiler-plate/src/repository/gorm"
+	usecasePackage "github.com/yanuar-nc/go-boiler-plate/src/usecase"
 
 	"github.com/labstack/echo"
 	"gorm.io/gorm"
@@ -16,7 +16,7 @@ import (
 
 // EchoServer structure
 type EchoServer struct {
-	movieEchoHandler *movieDeliveryJson.EchoHandler
+	movieEchoHandler *deliveryJson.EchoHandler
 }
 
 // Run main function for serving echo http server
@@ -38,11 +38,11 @@ func (s *EchoServer) Run() {
 
 // NewEchoServer function
 func NewEchoServer(writeDb, readDb *gorm.DB) (*EchoServer, error) {
-	movieRepositoryImpl := movieRepository.NewMovieRepositoryGorm(writeDb)
+	repositoryImpl := gormRepository.NewRepository(writeDb)
 
-	movieUsecase := movieUsecasePackage.NewMovieUsecaseImpl(movieRepositoryImpl)
+	usecase := usecasePackage.NewUsecaseImplementation().PutRepository(repositoryImpl)
 
-	movieEchoHandler := movieDeliveryJson.NewEchoHandler(movieUsecase)
+	movieEchoHandler := deliveryJson.NewEchoHandler(usecase)
 
 	return &EchoServer{
 		movieEchoHandler: movieEchoHandler,

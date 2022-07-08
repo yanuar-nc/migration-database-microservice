@@ -5,19 +5,19 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/yanuar-nc/go-boiler-plate/helper"
-	"github.com/yanuar-nc/go-boiler-plate/src/movie/domain"
-	"github.com/yanuar-nc/go-boiler-plate/src/movie/usecase"
+	"github.com/yanuar-nc/go-boiler-plate/src/domain"
+	"github.com/yanuar-nc/go-boiler-plate/src/usecase"
 )
 
 // EchoHandler structure
 type EchoHandler struct {
-	movieUsecase usecase.MovieUsecase
+	usecase usecase.Usecase
 }
 
 // NewEchoHandler function
 // Returns *EchoHandler
-func NewEchoHandler(movieUsecase usecase.MovieUsecase) *EchoHandler {
-	return &EchoHandler{movieUsecase: movieUsecase}
+func NewEchoHandler(usecase usecase.Usecase) *EchoHandler {
+	return &EchoHandler{usecase: usecase}
 }
 
 // Mount function
@@ -42,7 +42,7 @@ func (h *EchoHandler) Save(c echo.Context) error {
 		return response.ShowHTTPResponse(c)
 	}
 
-	err = h.movieUsecase.Save(c.Request().Context(), param)
+	err = h.usecase.Save(c.Request().Context(), param)
 	if err != nil {
 		response.Success = false
 		response.Message = err.Error()
