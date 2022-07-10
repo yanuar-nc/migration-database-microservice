@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	"github.com/yanuar-nc/go-boiler-plate/helper"
-	"github.com/yanuar-nc/go-boiler-plate/src/domain"
-	"github.com/yanuar-nc/go-boiler-plate/src/usecase"
+	"github.com/yanuar-nc/migration-database-microservice/helper"
+	"github.com/yanuar-nc/migration-database-microservice/src/domain"
+	"github.com/yanuar-nc/migration-database-microservice/src/usecase"
 )
 
 // EchoHandler structure
@@ -31,7 +31,7 @@ func (h *EchoHandler) Save(c echo.Context) error {
 
 	response := new(helper.JSONSchemaTemplate)
 
-	param := domain.Movie{}
+	param := domain.User{}
 
 	err := c.Bind(&param)
 	if err != nil {

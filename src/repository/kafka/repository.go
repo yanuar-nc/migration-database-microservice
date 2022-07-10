@@ -8,11 +8,9 @@ import (
 
 	"github.com/Shopify/sarama"
 	log "github.com/sirupsen/logrus"
-	"github.com/yanuar-nc/migration-database-microservice/helper"
-	"github.com/yanuar-nc/migration-database-microservice/src/shared/domain"
+	"github.com/yanuar-nc/migration-database-microservice/src/domain"
 )
 
-// KafkaMessageBroker struct
 type Kafka struct {
 	config  *sarama.Config
 	brokers []string
@@ -51,6 +49,6 @@ func (k *Kafka) Publish(ctx context.Context, topic string, event domain.EventMes
 		return err
 	}
 
-	helper.Log(log.InfoLevel, fmt.Sprintf("Producer is successfully in partition %d and offset %d", partition, offset), "Kafka", "producer_send_message")
+	log.Info(fmt.Sprintf("Producer is successfully in partition %d and offset %d", partition, offset), "Kafka", "producer_send_message")
 	return nil
 }

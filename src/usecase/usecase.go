@@ -1,20 +1,23 @@
 package usecase
 
 import (
-	"context"
-
-	"github.com/yanuar-nc/go-boiler-plate/src/domain"
-	"github.com/yanuar-nc/go-boiler-plate/src/repository"
+	"github.com/yanuar-nc/migration-database-microservice/config"
+	"github.com/yanuar-nc/migration-database-microservice/src/repository"
 )
 
 // UsecaseImplementation struct
 type UsecaseImplementation struct {
-	repository repository.Repository
+	repository          repository.Repository
+	repositoryMigration repository.Repository
+	eventRepository     repository.EventRepository
+	cfg                 config.Config
 }
 
 // NewUsecaseImplementation function
-func NewUsecaseImplementation() *UsecaseImplementation {
-	return &UsecaseImplementation{}
+func NewUsecaseImplementation(cfg config.Config) *UsecaseImplementation {
+	return &UsecaseImplementation{
+		cfg: cfg,
+	}
 }
 
 func (u *UsecaseImplementation) PutRepository(repo repository.Repository) *UsecaseImplementation {
@@ -22,12 +25,12 @@ func (u *UsecaseImplementation) PutRepository(repo repository.Repository) *Useca
 	return u
 }
 
-func (u *UsecaseImplementation) Save(ctx context.Context, req domain.Movie) error {
+func (u *UsecaseImplementation) PutRepositoryMigration(repo repository.Repository) *UsecaseImplementation {
+	u.repositoryMigration = repo
+	return u
+}
 
-	err := u.repository.Save(ctx, &req)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (u *UsecaseImplementation) PutEventRepository(repo repository.EventRepository) *UsecaseImplementation {
+	u.eventRepository = repo
+	return u
 }

@@ -1,5 +1,10 @@
 package config
 
+import (
+	"cloud.google.com/go/firestore"
+	"github.com/Shopify/sarama"
+)
+
 type ConfigWriteDB struct {
 	// Host config
 	Host string
@@ -24,4 +29,36 @@ type ConfigReadDB struct {
 	Password string
 	// Port config
 	Port int
+}
+
+type EventConfig struct {
+	// Broker config
+	Broker string
+
+	// GroupID config
+	GroupID string
+
+	// ClientID config
+	ClientID string
+
+	// Topics config
+	Topics []string
+
+	// TopicUser config
+	TopicUser string
+
+	Config *sarama.Config
+}
+
+func (c EventConfig) EventInsert() string {
+	return "INSERT"
+}
+
+func (c EventConfig) EventUpdate() string {
+	return "UPDATE"
+}
+
+type FirestoreConfig struct {
+	ProjectID string
+	Client    *firestore.Client
 }

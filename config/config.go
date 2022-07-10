@@ -18,28 +18,6 @@ var (
 
 	// GRPCPort config
 	GRPCPort string
-
-	// WriteDBHost config
-	WriteDBHost string
-	// WriteDBName config
-	WriteDBName string
-	// WriteDBUser config
-	WriteDBUser string
-	// WriteDBPassword config
-	WriteDBPassword string
-	// WriteDBPort config
-	WriteDBPort int
-
-	// ReadDBHost config
-	ReadDBHost string
-	// ReadDBName config
-	ReadDBName string
-	// ReadDBUser config
-	ReadDBUser string
-	// ReadDBPassword config
-	ReadDBPassword string
-	// ReadDBPort config
-	ReadDBPort int
 )
 
 type Config struct {
@@ -55,6 +33,10 @@ type Config struct {
 	WriteDB ConfigWriteDB
 
 	ReadDB ConfigReadDB
+
+	Event EventConfig
+
+	Firestore FirestoreConfig
 }
 
 // Load function will load all config from environment variable
@@ -87,6 +69,16 @@ func Load() (Config, error) {
 	}
 
 	err = c.setWriteDB()
+	if err != nil {
+		return c, err
+	}
+
+	err = c.setKafka()
+	if err != nil {
+		return c, err
+	}
+
+	err = c.setFirestore()
 	if err != nil {
 		return c, err
 	}
@@ -210,6 +202,52 @@ func (c *Config) setReadDB() error {
 
 	// set ReadDBPort
 	c.ReadDB.Port, _ = strconv.Atoi(readDBPort)
+
+	return nil
+}
+
+func (c *Config) setKafka() error {
+	// set KafkaBroker
+	kafkaBroker, ok := os.LookupEnv("KAFKA_BROKER")
+	if !ok {
+		return errors.New("KAFKA_BROKER env is not loaded")
+	}
+
+	// set KafkaBroker
+	c.Event.Broker = kafkaBroker
+
+	// set KafkaGroupID
+	kafkaGroupId, ok := os.LookupEnv("KAFKA_GROUP_ID")
+	if !ok {
+		return errors.New("KAFKA_GROUP_ID env is not loaded")
+	}
+
+	// set KafkaGroupID
+	c.Event.GroupID = kafkaGroupId
+
+	// set KafkaClientID
+	kafkaClientID, ok := os.LookupEnv("KAFKA_CLIENT_ID")
+	if !ok {
+		return errors.New("KAFKA_CLIENT_ID env is not loaded")
+	}
+	c.Event.ClientID = kafkaClientID
+
+	// set KafkaTopics
+	kafkaTopicUser, ok := os.LookupEnv("KAFKA_TOPIC_USER")
+	if !ok {
+		return errors.New("KAFKA_TOPIC_USER env is not loaded")
+	}
+	c.Event.TopicUser = kafkaTopicUser
+
+	// set KafkaTopics
+	c.Event.Topics = []string{kafkaTopicUser}
+
+	return nil
+}
+
+func (c *Config) setFirestore() error {
+	// set ProjectID
+	c.Firestore.ProjectID = "stockbit-api-dev"
 
 	return nil
 }
