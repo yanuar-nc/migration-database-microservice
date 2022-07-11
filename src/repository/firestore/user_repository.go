@@ -37,6 +37,6 @@ func (l *Repository) MigrationGet(ctx context.Context) (*domain.Migration, error
 	return &domain.Migration{}, nil
 }
 
-func (l *Repository) GetByID(ctx context.Context, id int) (domain.User, error) {
-	return domain.User{}, nil
+func (l *Repository) GetByID(ctx context.Context, id int) (*domain.User, error) {
+	return &domain.User{}, nil
 }

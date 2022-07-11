@@ -7,29 +7,24 @@ import (
 
 	cluster "github.com/bsm/sarama-cluster"
 	log "github.com/sirupsen/logrus"
-	"gorm.io/gorm"
+	delivery "github.com/yanuar-nc/migration-database-microservice/src/delivery/event"
+	repository "github.com/yanuar-nc/migration-database-microservice/src/repository/gorm"
+	kafkaRepository "github.com/yanuar-nc/migration-database-microservice/src/repository/kafka"
+	usecasePackage "github.com/yanuar-nc/migration-database-microservice/src/usecase"
 
 	"github.com/yanuar-nc/migration-database-microservice/config"
 	"github.com/yanuar-nc/migration-database-microservice/helper"
-	"github.com/yanuar-nc/migration-database-microservice/src/repository"
-
-	"github.com/yanuar-nc/migration-database-microservice/src/delivery"
-	"github.com/yanuar-nc/migration-database-microservice/src/usecase"
 )
 
-func NewEvent(writeDb, readDb *gorm.DB) error {
-	cfg, err := config.Load()
-	if err != nil {
-		return err
-	}
+func NewEvent(cfg config.Config) error {
 
 	// cluster kafka construct with partitions mode
 	clusterConfig := cluster.NewConfig()
-	clusterConfig.ClientID = cfg.Kafka.ClientID
+	clusterConfig.ClientID = cfg.Event.ClientID
 	clusterConfig.Group.Mode = cluster.ConsumerModePartitions
 
 	// init consumer
-	consumer, err := cluster.NewConsumer([]string{cfg.Kafka.Broker}, cfg.Kafka.GroupID, cfg.Kafka.Topics, clusterConfig)
+	consumer, err := cluster.NewConsumer([]string{cfg.Event.Broker}, cfg.Event.GroupID, cfg.Event.Topics, clusterConfig)
 	if err != nil {
 		return err
 	}
@@ -38,10 +33,13 @@ func NewEvent(writeDb, readDb *gorm.DB) error {
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt)
 
-	movieRepositoryWrite := movieRepositoryPackage.NewMovieRepositoryGorm(writeDb)
+	firestoreRepository := repository.NewRepository(cfg.WriteDB.DB)
+	kafkaRepository := kafkaRepository.NewKafka([]string{cfg.Event.Broker}, cfg.Event.Config)
+	usecase := usecasePackage.NewUsecaseImplementation(cfg).
+		PutRepository(firestoreRepository).
+		PutEventRepository(kafkaRepository)
 
-	eventUsecase := eventUsecasePackage.NewEventUsecaseImpl(movieRepositoryWrite)
-	eventEventHandler := eventDeliveryPackage.NewEventHandler(eventUsecase)
+	eventHandler := delivery.NewEventHandler(usecase)
 
 	for {
 		select {
@@ -53,12 +51,12 @@ func NewEvent(writeDb, readDb *gorm.DB) error {
 			go func(pc cluster.PartitionConsumer) {
 				for msg := range pc.Messages() {
 					switch msg.Topic {
-					case cfg.Kafka.TopicMovie:
-						err := eventEventHandler.Movie(msg.Key, msg.Value)
+					case cfg.Event.TopicUser:
+						err := eventHandler.User(msg.Key, msg.Value)
 						if err != nil {
-							helper.Log(log.ErrorLevel, err.Error(), "Event", "movie")
+							helper.Log(log.ErrorLevel, err.Error(), "Event", "user")
 						}
-						helper.Log(log.InfoLevel, "movie is successfully consumed", "Event", "movie")
+						helper.Log(log.InfoLevel, "user is successfully consumed", "Event", "user")
 
 					}
 

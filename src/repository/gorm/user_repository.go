@@ -37,6 +37,10 @@ func (l *Repository) Update(ctx context.Context, data *domain.User) error {
 	return nil
 }
 
-func (l *Repository) GetByID(ctx context.Context, id int) (domain.User, error) {
-	return domain.User{}, nil
+func (l *Repository) FetchAll(ctx context.Context, filter domain.Filter) ([]domain.User, error) {
+	return nil, nil
+}
+
+func (l *Repository) GetByID(ctx context.Context, id int) (*domain.User, error) {
+	return &domain.User{}, nil
 }

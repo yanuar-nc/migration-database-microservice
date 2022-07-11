@@ -3,6 +3,7 @@ package config
 import (
 	"cloud.google.com/go/firestore"
 	"github.com/Shopify/sarama"
+	"gorm.io/gorm"
 )
 
 type ConfigWriteDB struct {
@@ -16,6 +17,8 @@ type ConfigWriteDB struct {
 	Password string
 	// Port config
 	Port int
+
+	DB *gorm.DB
 }
 
 type ConfigReadDB struct {
