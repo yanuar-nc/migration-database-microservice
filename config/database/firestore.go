@@ -20,6 +20,6 @@ func GetFirestoreConn(projectID string) (*firestore.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer client.Close()
+	// defer client.Close()
 	return client, nil
 }

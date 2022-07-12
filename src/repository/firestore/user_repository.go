@@ -2,9 +2,12 @@ package firestore
 
 import (
 	"context"
+	"fmt"
+	"log"
 
 	"cloud.google.com/go/firestore"
 	"github.com/yanuar-nc/migration-database-microservice/src/domain"
+	"google.golang.org/api/iterator"
 )
 
 // Repository struct
@@ -26,6 +29,21 @@ func (l *Repository) Update(ctx context.Context, data *domain.User) error {
 }
 
 func (l *Repository) FetchAll(ctx context.Context, filter domain.Filter) ([]domain.User, error) {
+
+	iter := l.client.Collection("sekuritas-opening-account").
+		Where("partner.data.name", "==", "medusa001").
+		Documents(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			log.Fatalf("Failed to iterate: %v", err)
+		}
+		fmt.Println(doc.Data())
+	}
+
 	return nil, nil
 }
 
