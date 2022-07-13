@@ -39,8 +39,13 @@ func (u *UsecaseImplementation) Migration(ctx context.Context) error {
 					}
 					return nil
 				},
-				nil,
+				retry.Attempts(3),
+				retry.Delay(time.Second*1),
+				retry.LastErrorOnly(true),
 			)
+			if err != nil {
+				return err
+			}
 		}
 		createdAt = int(user.CreatedAt.Unix())
 

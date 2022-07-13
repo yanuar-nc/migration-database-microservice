@@ -13,6 +13,7 @@ require (
 	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.1
+	github.com/mitchellh/mapstructure v1.1.2
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.1
 	github.com/xeipuuv/gojsonschema v1.2.0

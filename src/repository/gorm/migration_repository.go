@@ -9,6 +9,10 @@ import (
 )
 
 func (r *Repository) MigrationUpdate(ctx context.Context, data *domain.Migration) error {
+	update := r.db.Debug().First(data).Save(data)
+	if update.Error != nil {
+		return update.Error
+	}
 	return nil
 }
 

@@ -2,12 +2,10 @@ package firestore
 
 import (
 	"context"
-	"fmt"
-	"log"
 
 	"cloud.google.com/go/firestore"
+	"github.com/mitchellh/mapstructure"
 	"github.com/yanuar-nc/migration-database-microservice/src/domain"
-	"google.golang.org/api/iterator"
 )
 
 // Repository struct
@@ -30,21 +28,24 @@ func (l *Repository) Update(ctx context.Context, data *domain.User) error {
 
 func (l *Repository) FetchAll(ctx context.Context, filter domain.Filter) ([]domain.User, error) {
 
-	iter := l.client.Collection("sekuritas-opening-account").
+	iter, err := l.client.Collection("sekuritas-opening-account").
 		Where("partner.data.name", "==", "medusa001").
-		Documents(ctx)
-	for {
-		doc, err := iter.Next()
-		if err == iterator.Done {
-			break
-		}
+		Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
+	}
+	var users []domain.User
+	for _, s := range iter {
+		var user domain.UserDetail
+		err = toStruct(s.Data(), &user)
 		if err != nil {
-			log.Fatalf("Failed to iterate: %v", err)
+			return nil, err
 		}
-		fmt.Println(doc.Data())
+		user.Form.Personal.ID = user.ID
+		users = append(users, user.Form.Personal)
 	}
 
-	return nil, nil
+	return users, nil
 }
 
 func (l *Repository) MigrationUpdate(ctx context.Context, data *domain.Migration) error {
@@ -55,6 +56,21 @@ func (l *Repository) MigrationGet(ctx context.Context) (*domain.Migration, error
 	return &domain.Migration{}, nil
 }
 
-func (l *Repository) GetByID(ctx context.Context, id int) (*domain.User, error) {
+func (l *Repository) GetByID(ctx context.Context, id string) (*domain.User, error) {
 	return &domain.User{}, nil
+}
+
+func toStruct(v map[string]interface{}, r interface{}) (err error) {
+	ms, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
+		TagName: "map",
+		Result:  &r,
+	})
+	if err != nil {
+		return err
+	}
+	err = ms.Decode(v)
+	if err != nil {
+		return err
+	}
+	return
 }

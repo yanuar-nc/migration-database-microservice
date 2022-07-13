@@ -10,7 +10,7 @@ import (
 type Repository interface {
 	Save(ctx context.Context, data *domain.User) error
 	Update(ctx context.Context, data *domain.User) error
-	GetByID(ctx context.Context, id int) (*domain.User, error)
+	GetByID(ctx context.Context, id string) (*domain.User, error)
 	FetchAll(ctx context.Context, filter domain.Filter) ([]domain.User, error)
 	MigrationUpdate(ctx context.Context, data *domain.Migration) error
 	MigrationGet(ctx context.Context) (*domain.Migration, error)
