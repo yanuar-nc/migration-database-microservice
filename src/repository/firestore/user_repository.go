@@ -42,6 +42,7 @@ func (l *Repository) FetchAll(ctx context.Context, filter domain.Filter) ([]doma
 			return nil, err
 		}
 		user.Form.Personal.ID = user.ID
+		user.Form.Personal.CreatedAt = s.CreateTime
 		users = append(users, user.Form.Personal)
 	}
 

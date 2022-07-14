@@ -15,8 +15,6 @@ func (u *UsecaseImplementation) Migration(ctx context.Context) error {
 		err       error
 	)
 
-	defer u.migrationUpdate(ctx, createdAt, err)
-
 	m, err := u.repositoryMigration.MigrationGet(ctx)
 	if err != nil {
 		return err
@@ -30,6 +28,7 @@ func (u *UsecaseImplementation) Migration(ctx context.Context) error {
 
 	for _, user := range users {
 
+		createdAt = int(user.CreatedAt.Unix())
 		_, err := u.repositoryMigration.GetByID(ctx, user.ID)
 		if err != nil && err.Error() == "NOT_FOUND" {
 			err = retry.Do(
@@ -47,7 +46,7 @@ func (u *UsecaseImplementation) Migration(ctx context.Context) error {
 				return err
 			}
 		}
-		createdAt = int(user.CreatedAt.Unix())
+		u.migrationUpdate(ctx, createdAt, nil)
 
 	}
 	return nil

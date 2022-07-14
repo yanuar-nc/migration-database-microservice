@@ -14,8 +14,9 @@ type User struct {
 }
 
 type UserDetail struct {
-	ID   string         `json:"id,omitempty" map:"id" firestore:"id"`
-	Form UserDetailForm `json:"form,omitempty" map:"form" firestore:"form"`
+	ID        string         `json:"id,omitempty" map:"id" firestore:"id"`
+	Form      UserDetailForm `json:"form,omitempty" map:"form" firestore:"form"`
+	CreatedAt time.Time      `gorm:"column:created_at" json:"created_at"`
 }
 
 type UserDetailForm struct {
