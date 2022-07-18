@@ -16,7 +16,7 @@ func (u *UsecaseImplementation) Save(ctx context.Context, req domain.User) error
 
 	u.eventRepository.Publish(ctx, u.cfg.Event.TopicUser, domain.EventMessage{
 		EventType: domain.EventInsert,
-		Key:       fmt.Sprintf("%d", req.ID),
+		Key:       fmt.Sprintf("%s", req.ID),
 		Message:   req,
 	})
 	return nil
@@ -31,7 +31,7 @@ func (u *UsecaseImplementation) Update(ctx context.Context, req domain.User) err
 
 	u.eventRepository.Publish(ctx, u.cfg.Event.TopicUser, domain.EventMessage{
 		EventType: domain.EventUpdate,
-		Key:       fmt.Sprintf("%d", req.ID),
+		Key:       fmt.Sprintf("%s", req.ID),
 		Message:   req,
 	})
 
