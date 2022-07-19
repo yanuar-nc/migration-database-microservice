@@ -17,6 +17,7 @@ import (
 // EchoServer structure
 type EchoServer struct {
 	echoHandler *deliveryJson.EchoHandler
+	cfg         config.Config
 }
 
 // Run main function for serving echo http server
@@ -32,7 +33,7 @@ func (s *EchoServer) Run() {
 	userGroupV1 := e.Group("/user")
 	s.echoHandler.Mount(userGroupV1)
 
-	listenerPort := fmt.Sprintf(":%d", config.HTTPPort)
+	listenerPort := fmt.Sprintf(":%d", s.cfg.HTTPPort)
 	e.Logger.Fatal(e.Start(listenerPort))
 }
 
@@ -48,5 +49,6 @@ func NewEchoServer(cfg config.Config) (*EchoServer, error) {
 
 	return &EchoServer{
 		echoHandler: echoHandler,
+		cfg:         cfg,
 	}, nil
 }

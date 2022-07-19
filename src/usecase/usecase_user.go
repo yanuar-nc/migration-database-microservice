@@ -4,11 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	uuid "github.com/nu7hatch/gouuid"
 	"github.com/yanuar-nc/migration-database-microservice/src/domain"
 )
 
 func (u *UsecaseImplementation) Save(ctx context.Context, req domain.User) error {
 
+	u4, _ := uuid.NewV4()
+	req.ID = u4.String()
 	err := u.repository.Save(ctx, &req)
 	if err != nil {
 		return err

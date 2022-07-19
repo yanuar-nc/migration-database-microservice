@@ -19,6 +19,14 @@ func NewRepository(client *firestore.Client) *Repository {
 }
 
 func (l *Repository) Save(ctx context.Context, data *domain.User) error {
+	_, _, err := l.client.Collection("test").Add(ctx, &domain.UserDetail{
+		Form: domain.UserDetailForm{
+			Personal: *data,
+		},
+	})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -28,8 +36,8 @@ func (l *Repository) Update(ctx context.Context, data *domain.User) error {
 
 func (l *Repository) FetchAll(ctx context.Context, filter domain.Filter) ([]domain.User, error) {
 
-	iter, err := l.client.Collection("sekuritas-opening-account").
-		Where("partner.data.name", "==", "medusa001").
+	iter, err := l.client.Collection("test").
+		Where("partner.data.name", "==", "alhamsya10000").
 		Documents(ctx).GetAll()
 	if err != nil {
 		return nil, err
