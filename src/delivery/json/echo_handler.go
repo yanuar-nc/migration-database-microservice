@@ -57,3 +57,35 @@ func (h *EchoHandler) Save(c echo.Context) error {
 
 	return response.ShowHTTPResponse(c)
 }
+
+// Update handler
+func (h *EchoHandler) Update(c echo.Context) error {
+
+	response := new(helper.JSONSchemaTemplate)
+
+	param := domain.User{}
+
+	err := c.Bind(&param)
+	if err != nil {
+		response.Success = false
+		response.Message = err.Error()
+		response.Code = http.StatusBadRequest
+		response.SetData(helper.Empty{})
+		return response.ShowHTTPResponse(c)
+	}
+
+	err = h.usecase.Update(c.Request().Context(), param)
+	if err != nil {
+		response.Success = false
+		response.Message = err.Error()
+		response.Code = http.StatusBadRequest
+		response.SetData(helper.Empty{})
+		return response.ShowHTTPResponse(c)
+	}
+
+	response.Success = true
+	response.Message = "Post Movie Response"
+	response.Code = http.StatusOK
+
+	return response.ShowHTTPResponse(c)
+}

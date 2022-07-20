@@ -2,6 +2,7 @@ package firestore
 
 import (
 	"context"
+	"time"
 
 	"cloud.google.com/go/firestore"
 	"github.com/mitchellh/mapstructure"
@@ -23,6 +24,7 @@ func (l *Repository) Save(ctx context.Context, data *domain.User) error {
 		Form: domain.UserDetailForm{
 			Personal: *data,
 		},
+		CreatedAt: time.Now(),
 	})
 	if err != nil {
 		return err
