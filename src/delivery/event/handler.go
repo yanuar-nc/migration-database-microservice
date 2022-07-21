@@ -50,7 +50,7 @@ func (c *EventHandler) Create(key, message []byte) error {
 		return err
 	}
 
-	err := c.usecase.Save(context.Background(), param)
+	err := c.usecase.EventSave(context.Background(), param)
 	if err != nil {
 		return err
 	}

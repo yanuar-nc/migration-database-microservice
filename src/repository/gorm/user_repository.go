@@ -47,7 +47,7 @@ func (l *Repository) GetByID(ctx context.Context, id string) (*domain.User, erro
 	q := l.db.Debug().Where(&domain.User{ID: id}).First(&result)
 	if q.Error != nil {
 		if q.Error == gorm.ErrRecordNotFound {
-			return nil, errors.New("NOT_FOUND")
+			return nil, errors.New(domain.DataIsNotFound)
 		}
 		return nil, q.Error
 	}
