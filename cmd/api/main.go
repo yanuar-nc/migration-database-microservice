@@ -20,18 +20,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// writeDB, err := database.GetGormConn(cfg.WriteDB.Host, cfg.WriteDB.User, cfg.WriteDB.Name, cfg.WriteDB.Password, cfg.WriteDB.Port)
-	// if err != nil {
-	// 	helper.Log(log.FatalLevel, err.Error(), "Main", "write_db")
-	// 	os.Exit(1)
-	// }
-
-	// readDB, err := database.GetGormConn(cfg.ReadDB.Host, cfg.ReadDB.User, cfg.ReadDB.Name, cfg.ReadDB.Password, cfg.ReadDB.Port)
-	// if err != nil {
-	// 	helper.Log(log.FatalLevel, err.Error(), "Main", "read_db")
-	// 	os.Exit(1)
-	// }
-
 	client, err := database.GetFirestoreConn(cfg.Firestore.ProjectID)
 	if err != nil {
 		helper.Log(log.FatalLevel, err.Error(), "Main", "client_db")

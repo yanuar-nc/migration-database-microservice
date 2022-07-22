@@ -29,10 +29,10 @@ func (u *UsecaseImplementation) Save(ctx context.Context, req domain.User) error
 
 func (u *UsecaseImplementation) Update(ctx context.Context, req domain.User) error {
 
-	err := u.repository.Update(ctx, &req)
-	if err != nil {
-		return err
-	}
+	// err := u.repository.Update(ctx, &req)
+	// if err != nil {
+	// 	return err
+	// }
 
 	u.eventRepository.Publish(ctx, u.cfg.Event.TopicUser, domain.EventMessage{
 		EventType: domain.EventUpdate,

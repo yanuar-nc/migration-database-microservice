@@ -20,8 +20,7 @@ func (u *UsecaseImplementation) Migration(ctx context.Context) error {
 		return err
 	}
 
-	createdAtTime := time.Unix(m.Version, 0)
-	users, err := u.migrationFetchAll(ctx, createdAtTime)
+	users, err := u.migrationFetchAll(ctx, m.Version)
 	if err != nil {
 		return err
 	}
@@ -29,8 +28,8 @@ func (u *UsecaseImplementation) Migration(ctx context.Context) error {
 	for _, user := range users {
 
 		createdAt = int(user.CreatedAt.Unix())
-		_, err := u.repositoryMigration.GetByID(ctx, user.ID)
-		if err != nil && err.Error() == "NOT_FOUND" {
+		us, err := u.repositoryMigration.GetByID(ctx, user.ID)
+		if err != nil && err.Error() == domain.DataIsNotFound {
 			err = retry.Do(
 				func() error {
 					if err := u.repositoryMigration.Save(ctx, &user); err != nil {
@@ -46,20 +45,21 @@ func (u *UsecaseImplementation) Migration(ctx context.Context) error {
 				return err
 			}
 		}
+		_ = us
 		u.migrationUpdate(ctx, createdAt, nil)
 
 	}
 	return nil
 }
 
-func (u *UsecaseImplementation) migrationFetchAll(ctx context.Context, createdAt time.Time) ([]domain.User, error) {
+func (u *UsecaseImplementation) migrationFetchAll(ctx context.Context, createdAt int64) ([]domain.User, error) {
 	users, err := u.repository.FetchAll(ctx, domain.Filter{
 		CreatedAt: domain.FilterValue{
 			Sort:   "ASC",
 			Value:  createdAt,
 			Bigger: true,
 		},
-		Limit: 50,
+		Limit: 10,
 	})
 	if err != nil {
 		return nil, err

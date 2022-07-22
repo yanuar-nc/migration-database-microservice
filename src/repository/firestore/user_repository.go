@@ -39,7 +39,9 @@ func (l *Repository) Update(ctx context.Context, data *domain.User) error {
 func (l *Repository) FetchAll(ctx context.Context, filter domain.Filter) ([]domain.User, error) {
 
 	iter, err := l.client.Collection("test").
-		Where("partner.data.name", "==", "alhamsya10000").
+		Where("created_at", ">=", time.Unix(filter.CreatedAt.Value.(int64), 0)).
+		OrderBy("created_at", firestore.Asc).
+		Limit(filter.Limit).
 		Documents(ctx).GetAll()
 	if err != nil {
 		return nil, err
@@ -51,7 +53,7 @@ func (l *Repository) FetchAll(ctx context.Context, filter domain.Filter) ([]doma
 		if err != nil {
 			return nil, err
 		}
-		user.Form.Personal.ID = user.ID
+		user.Form.Personal.ID = s.Ref.ID
 		user.Form.Personal.CreatedAt = s.CreateTime
 		users = append(users, user.Form.Personal)
 	}
